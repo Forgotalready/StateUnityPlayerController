@@ -1,11 +1,9 @@
-﻿using System;
-using R3;
+﻿using R3;
 using StatePlayerMovementSystem.Predicate;
 using StatePlayerMovementSystem.State;
 using StatePlayerMovementSystem.Transition;
 using UnityEngine;
 using Zenject;
-using IState = Unity.VisualScripting.IState;
 
 namespace StatePlayerMovementSystem
 {
@@ -22,8 +20,9 @@ namespace StatePlayerMovementSystem
     private bool _isMoving = false;
 
     [Inject]
-    private void Init(PlayerController playerController, ViewRotator viewRotator)
+    private void Init(Vector3 spawnPosition, PlayerController playerController, ViewRotator viewRotator)
     {
+      transform.position = spawnPosition;
       _playerController = playerController;
       _viewRotator = viewRotator;
       _characterController = GetComponent<CharacterController>();
