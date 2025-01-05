@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CameraController
+public class ViewRotator
 {
   private readonly float _mouseSensitivity = 100.0f;
   private float _verticalRotation = 0f;

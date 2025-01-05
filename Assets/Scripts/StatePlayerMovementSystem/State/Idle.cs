@@ -2,15 +2,12 @@
 
 namespace StatePlayerMovementSystem.State
 {
-  public class Standing : IState
+  public class Idle : IState
   {
     public void Enter()
     { }
 
-    public Vector3 Update(Vector3 inputDirection)
-    {
-      return Vector3.zero;
-    }
+    public Vector3 Update(Vector3 direction) => Vector3.zero;
 
     public void Exit()
     { }

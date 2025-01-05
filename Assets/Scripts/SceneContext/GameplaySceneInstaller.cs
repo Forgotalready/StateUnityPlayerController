@@ -1,3 +1,4 @@
+using StatePlayerMovementSystem;
 using UnityEngine;
 using Zenject;
 
@@ -13,22 +14,15 @@ public class GameplaySceneInstaller : MonoInstaller
   private void PlayerBindings()
   {
     Container
-        .Bind<PlayerInput>()
+        .Bind<PlayerController>()
         .FromNew()
         .AsSingle();
-
     Container
-        .Bind<MovementController>()
+        .Bind<ViewRotator>()
         .FromNew()
         .AsSingle();
-
     Container
-        .Bind<CameraController>()
-        .FromNew()
-        .AsSingle();
-
-    Container
-        .Bind<JumpController>()
+        .Bind<Player>()
         .FromComponentInHierarchy()
         .AsSingle();
   }
