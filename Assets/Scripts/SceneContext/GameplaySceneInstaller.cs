@@ -1,11 +1,20 @@
+using Factory;
+using Managers;
+using StatePlayerMovementSystem;
 using UnityEngine;
 using Zenject;
 
 public class GameplaySceneInstaller : MonoInstaller
 {
+  [SerializeField] private GameObject _player;
+  
   public override void InstallBindings()
   {
     PlayerBindings();
+    Container
+        .Bind<GameManager>()
+        .FromComponentInHierarchy()
+        .AsSingle();
     Cursor.visible = false;
     Cursor.lockState = CursorLockMode.Locked;
   }
@@ -13,23 +22,16 @@ public class GameplaySceneInstaller : MonoInstaller
   private void PlayerBindings()
   {
     Container
-        .Bind<PlayerInput>()
+        .Bind<PlayerController>()
         .FromNew()
         .AsSingle();
-
     Container
-        .Bind<MovementController>()
+        .Bind<ViewRotator>()
         .FromNew()
         .AsSingle();
-
     Container
-        .Bind<CameraController>()
-        .FromNew()
-        .AsSingle();
-
-    Container
-        .Bind<JumpController>()
-        .FromComponentInHierarchy()
+        .BindFactory<Vector3, Player, PlayerFactory>()
+        .FromComponentInNewPrefab(_player)
         .AsSingle();
   }
 }

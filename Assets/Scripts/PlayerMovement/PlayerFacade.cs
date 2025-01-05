@@ -1,4 +1,5 @@
 using R3;
+using StatePlayerMovementSystem;
 using UnityEngine;
 using Zenject;
 
@@ -6,7 +7,7 @@ using Zenject;
 public class PlayerFacade : MonoBehaviour
 {
   private MovementController _movementController;
-  private CameraController _cameraController;
+  private ViewRotator _viewRotator;
   private JumpController _jumpController;
   private CharacterController _characterController;
   
@@ -18,10 +19,10 @@ public class PlayerFacade : MonoBehaviour
   private readonly CompositeDisposable _disposable = new();
   
   [Inject]
-  private void Init(MovementController movementController, CameraController cameraController, PlayerInput playerInput, JumpController jumpController)
+  private void Init(MovementController movementController, ViewRotator viewRotator, PlayerInput playerInput, JumpController jumpController)
   {
     _movementController = movementController;
-    _cameraController = cameraController;
+    _viewRotator = viewRotator;
     _playerInput = playerInput;
     _jumpController = jumpController;
     _characterController = GetComponent<CharacterController>();
@@ -66,7 +67,7 @@ public class PlayerFacade : MonoBehaviour
   private void FixedUpdate()
   {
     Vector2 mouseDelta = _playerInput.CameraDirection;
-    _cameraController.Rotate(mouseDelta, transform, _playerCamera);
+    _viewRotator.Rotate(mouseDelta, transform, _playerCamera);
     if (!_isMovementLocked)
     {
       Vector3 moveDirection = transform.rotation * _playerInput.MoveDirection;
