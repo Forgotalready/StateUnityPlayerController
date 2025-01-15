@@ -287,6 +287,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerCamera: {fileID: 6881288532074682266}
+  _groundCheck: {fileID: 8130375990954708435}
+  _groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &8130375990954708435
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DTO;
 using StatePlayerMovementSystem.State;
+using StatePlayerMovementSystem.State.Ground;
 using StatePlayerMovementSystem.Transition;
 
 namespace StatePlayerMovementSystem
@@ -29,7 +31,7 @@ namespace StatePlayerMovementSystem
 
     public IState GetCurrentState() => _currentState;
     
-    public void ChangeState(IState newState)
+    public void ChangeState(IState newState, PlayerDTO playerDto)
     {
       if (newState.GetType().Name == _currentState.GetType().Name)
       {
@@ -37,8 +39,8 @@ namespace StatePlayerMovementSystem
       }
 
       IState oldState = _currentState;
-      oldState.Exit();
-      newState.Enter();
+      oldState.Exit(playerDto);
+      newState.Enter(playerDto);
       _currentState = newState;
     }
   }

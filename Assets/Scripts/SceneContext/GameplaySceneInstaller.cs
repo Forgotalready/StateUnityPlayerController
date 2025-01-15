@@ -10,13 +10,18 @@ public class GameplaySceneInstaller : MonoInstaller
   
   public override void InstallBindings()
   {
+    Debug.Log("SceneInstaller: Start binding modules");
+    
     PlayerBindings();
+    
+    Debug.Log("SceneInstaller: Player Modules bind end");
+    
     Container
         .Bind<GameManager>()
         .FromComponentInHierarchy()
         .AsSingle();
-    Cursor.visible = false;
-    Cursor.lockState = CursorLockMode.Locked;
+    
+    Debug.Log("SceneInstaller: Modules bind end");
   }
 
   private void PlayerBindings()
