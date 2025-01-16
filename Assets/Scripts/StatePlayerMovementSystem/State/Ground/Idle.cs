@@ -1,16 +1,8 @@
-﻿using DTO;
-using UnityEngine;
-
-namespace StatePlayerMovementSystem.State.Ground
+﻿namespace StatePlayerMovementSystem.State.Ground
 {
-  public class Idle : BaseState
+  public class Idle : OnGround
   {
-    public override void Enter(PlayerDTO playerDto)
-    {
-      base.Enter(playerDto);
-      playerDto.SetStat("MovementSpeed", 0f);
-    }
-
-    public override Vector3 Update(Vector3 direction, PlayerDTO playerDto) => Vector3.zero;
+    protected override float MaxSpeed { get => 0.0f; }
+    protected override float Acceleration { get => 0.0f; }
   }
 }

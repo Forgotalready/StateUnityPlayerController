@@ -1,12 +1,13 @@
-﻿using DTO;
-using Helpers.Timer;
-using R3;
+﻿using R3;
+using UnityEngine;
+using Zenject;
 using StatePlayerMovementSystem.Predicate;
 using StatePlayerMovementSystem.State;
 using StatePlayerMovementSystem.State.Ground;
+using StatePlayerMovementSystem.State.Ground.Crouch;
 using StatePlayerMovementSystem.Transition;
-using UnityEngine;
-using Zenject;
+using Helpers.Timer;
+using DTO;
 
 namespace StatePlayerMovementSystem
 {
@@ -29,6 +30,8 @@ namespace StatePlayerMovementSystem
     private bool _isMoving = false;
     private bool _isGrounded = true;
     private bool _isJumped = false;
+    private bool _isCrouch = false;
+
     private PlayerDTO _playerDto = new();
 
     [Inject]
@@ -40,6 +43,7 @@ namespace StatePlayerMovementSystem
       _characterController = GetComponent<CharacterController>();
 
       _playerDto.SetStat("MovementSpeed", 0f);
+      _playerDto.SetStat("Player", gameObject);
 
       BindActionsOfPlayerFSM();
     }
@@ -50,14 +54,17 @@ namespace StatePlayerMovementSystem
       var idle = new Idle();
       var jump = new Jump();
       var fall = new Fall();
+      var crouchIdle = new CrouchIdle();
+      var crouchMoving = new CrouchMoving();
 
       _playerFsm.AddTransition(
           idle,
           new[]
           {
-              new ConcreteTransition(moving, new FuncPredicate(() => (_isMoving && _isGrounded))),
+              new ConcreteTransition(moving, new FuncPredicate(() => _isMoving && _isGrounded)),
               new ConcreteTransition(jump, new FuncPredicate(() => _isJumped)),
-              new ConcreteTransition(fall, new FuncPredicate(() => !_isGrounded))
+              new ConcreteTransition(fall, new FuncPredicate(() => !_isGrounded && !_isJumped)),
+              new ConcreteTransition(crouchIdle, new FuncPredicate(() => _isCrouch))
           }
       );
 
@@ -67,7 +74,8 @@ namespace StatePlayerMovementSystem
           {
               new ConcreteTransition(idle, new FuncPredicate(() => !_isMoving && _isGrounded)),
               new ConcreteTransition(jump, new FuncPredicate(() => _isJumped)),
-              new ConcreteTransition(fall, new FuncPredicate(() => !_isGrounded))
+              new ConcreteTransition(fall, new FuncPredicate(() => !_isGrounded && !_isJumped)),
+              new ConcreteTransition(crouchMoving, new FuncPredicate(() => _isCrouch))
           }
       );
 
@@ -79,13 +87,33 @@ namespace StatePlayerMovementSystem
               new ConcreteTransition(moving, new FuncPredicate(() => _isMoving && _isGrounded))
           }
       );
-      
+
       _playerFsm.AddTransition(
           fall,
           new[]
           {
               new ConcreteTransition(idle, new FuncPredicate(() => !_isMoving && _isGrounded)),
               new ConcreteTransition(moving, new FuncPredicate(() => _isMoving && _isGrounded))
+          }
+      );
+
+      _playerFsm.AddTransition
+      (
+          crouchIdle,
+          new[]
+          {
+              new ConcreteTransition(idle, new FuncPredicate(() => !_isCrouch)),
+              new ConcreteTransition(crouchMoving, new FuncPredicate(() => _isMoving))
+          }
+      );
+      
+      _playerFsm.AddTransition
+      (
+          crouchMoving,
+          new[]
+          {
+              new ConcreteTransition(moving, new FuncPredicate(() => !_isCrouch)),
+              new ConcreteTransition(crouchIdle, new FuncPredicate(() => !_isMoving))
           }
       );
     }
@@ -99,6 +127,10 @@ namespace StatePlayerMovementSystem
             _isJumped = true;
             _jumpTimer.StartTimer();
           })
+          .AddTo(_disposable);
+      _playerController
+          .CrouchHold
+          .Subscribe(state => _isCrouch = state)
           .AddTo(_disposable);
       _jumpTimer
           .TimerTick
