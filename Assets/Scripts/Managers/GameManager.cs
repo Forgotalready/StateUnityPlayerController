@@ -18,6 +18,11 @@ namespace Managers
     private void Start()
     {
       _playerFactory.Create(spawnPosition.transform.position);
+      
+      Debug.Log("GameManager: Player created");
+      
+      Cursor.visible = false;
+      Cursor.lockState = CursorLockMode.Locked;
     }
   }
 }

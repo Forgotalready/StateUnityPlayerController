@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using DTO;
+using UnityEngine;
 
 namespace StatePlayerMovementSystem.State
 {
   public interface IState
   {
-    public void Enter();
-    public Vector3 Update(Vector3 direction);
-    public void Exit();
+    public void Enter(PlayerDTO playerData);
+    public Vector3 Update(Vector3 direction, PlayerDTO playerData);
+    public void Exit(PlayerDTO playerData);
   }
 }
